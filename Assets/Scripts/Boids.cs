@@ -1,159 +1,339 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Boids.cs" company="Guy Goudeau">
+//   Property of Guy Goudeau, do not steal.
+// </copyright>
+// <summary>
+//   Defines the Boids type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-public class Boids : MonoBehaviour
+namespace Assets.Scripts
 {
-    public GameObject boidPrefab;
-    public uint numberOfBoids = 25;
-    private List<Agent> boidsList;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    [Range(0.0f, 1.0f)]
-    public float cohesionMod;
-
-    [Range(0.0f, 1.0f)]
-    public float dispersionMod;
-
-    [Range(0.0f, 1.0f)]
-    public float alignmentMod;
-
-    private void Start()
+    /// <summary>
+    /// The BOIDS class.
+    /// </summary>
+    public class Boids : MonoBehaviour
     {
-        boidsList = new List<Agent>();
-        initialisePosition();
-	}
-	
-	private void Update()
-    {
-        moveBoids();
-	}
+        /// <summary>
+        /// The number of BOIDs.
+        /// </summary>
+        private const uint NumberOfBoids = 25;
 
-    private void initialisePosition()
-    {
-        for(int i = 0; i < numberOfBoids; i++)
+        /// <summary>
+        /// The BOID list.
+        /// </summary>
+        [SerializeField]
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private List<Agent> boidsList;
+
+        /// <summary>
+        /// The BOID prefab.
+        /// </summary>
+        [SerializeField]
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private GameObject boidPrefab;
+
+        /// <summary>
+        /// The cohesion mod.
+        /// </summary>
+        [Range(0.0f, 1.0f)]
+        private float cohesionMod;
+
+        /// <summary>
+        /// The dispersion mod.
+        /// </summary>
+        [Range(0.0f, 1.0f)]
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private float dispersionMod;
+
+        /// <summary>
+        /// The alignment mod.
+        /// </summary>
+        [Range(0.0f, 1.0f)]
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private float alignmentMod;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Boids"/> class.
+        /// </summary>
+        /// <param name="boidPrefab">
+        /// The BOID prefab.
+        /// </param>
+        /// <param name="cohesionMod">
+        /// The cohesion mod.
+        /// </param>
+        /// <param name="dispersionMod">
+        /// The dispersion mod.
+        /// </param>
+        /// <param name="alignmentMod">
+        /// The alignment mod.
+        /// </param>
+        public Boids(GameObject boidPrefab, float cohesionMod, float dispersionMod, float alignmentMod)
         {
-            GameObject boids = Instantiate(boidPrefab);
-            boids.GetComponent<Agent>().position = new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), Random.Range(-50, 50));
-            boidsList.Add(boids.GetComponent<Agent>());
+            this.boidPrefab = boidPrefab;
+            this.CohesionMod = cohesionMod;
+            this.dispersionMod = dispersionMod;
+            this.alignmentMod = alignmentMod;
+            this.boidsList = new List<Agent>();
         }
-    }
 
-    private void moveBoids()
-    {
-        Vector3 v1, v2, v3, v4, v5;
-        foreach(Agent allBoids in boidsList)
+        /// <summary>
+        /// Gets or sets the cohesion mod.
+        /// </summary>
+        public float CohesionMod
         {
-            v1 = Cohesion(allBoids);
-            v2 = Dispersion(allBoids);
-            v3 = Alignment(allBoids);
-            //v4 = bindPosition(allBoids);
-            v5 = tendTowardsPlace(allBoids);
-
-            allBoids.velocity += v1 + v2 + v3 + v5; //+ v4 + v5;
-            limitVelocity(allBoids);
-            allBoids.position += allBoids.velocity.normalized;
-        }
-    }
-
-    private Vector3 Cohesion(Agent thisBoid)
-    {
-        Vector3 perceivedCenter = Vector3.zero;
-        foreach(Agent otherBoid in boidsList)
-        {
-            if (otherBoid != thisBoid)
+            get
             {
-                perceivedCenter += otherBoid.position;
+                return this.cohesionMod;
+            }
+
+            set
+            {
+                this.cohesionMod = value;
             }
         }
-        perceivedCenter = perceivedCenter / (numberOfBoids - 1);
 
-        return (perceivedCenter - thisBoid.position).normalized * cohesionMod;
-    }
-
-    private Vector3 Dispersion(Agent thisBoid)
-    {
-        Vector3 displacement = Vector3.zero;
-        foreach(Agent otherBoid in boidsList)
+        /// <summary>
+        /// Gets or sets the dispersion mod.
+        /// </summary>
+        public float DispersionMod
         {
-            if (otherBoid != thisBoid)
+            get
             {
-                if ((otherBoid.position - thisBoid.position).magnitude < 100)
+                return this.dispersionMod;
+            }
+
+            set
+            {
+                this.dispersionMod = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the alignment mod.
+        /// </summary>
+        public float AlignmentMod
+        {
+            get
+            {
+                return this.alignmentMod;
+            }
+
+            set
+            {
+                this.alignmentMod = value;
+            }
+        }
+
+        /// <summary>
+        /// The rule to tend towards a place.
+        /// </summary>
+        /// <param name="thisBoid">
+        /// This BOID.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Vector3"/>.
+        /// </returns>
+        private static Vector3 TendTowardsPlace(Agent thisBoid)
+        {
+            var place = Vector3.zero;
+
+            return (place - thisBoid.Position) / 100;
+        }
+
+        /// <summary>
+        /// The rule to limit velocity.
+        /// </summary>
+        /// <param name="thisBoid">
+        /// This BOID.
+        /// </param>
+        private static void LimitVelocity(Agent thisBoid)
+        {
+            const int Limiter = 15;
+
+            if (thisBoid.Velocity.magnitude > Limiter)
+            {
+                thisBoid.Velocity = (thisBoid.Velocity / thisBoid.Velocity.magnitude).normalized * Limiter; 
+            }
+        }
+
+        /// <summary>
+        /// Takes care of actions that need to be done at program start.
+        /// </summary>
+        // ReSharper disable once UnusedMember.Local
+        private void Start()
+        {
+            this.InitialisePosition();
+        }
+
+        /// <summary>
+        /// Updates the scene every frame.
+        /// </summary>
+        // ReSharper disable once UnusedMember.Local
+        private void Update()
+        {
+            this.MoveBoids();
+        }
+
+        /// <summary>
+        /// Initializes BOIDs starting positions.
+        /// </summary>
+        private void InitialisePosition()
+        {
+            for (var i = 0; i < NumberOfBoids; i++)
+            {
+                var boids = Instantiate(this.boidPrefab);
+                boids.GetComponent<Agent>().Position = new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), Random.Range(-50, 50));
+                this.boidsList.Add(boids.GetComponent<Agent>());
+            }
+        }
+
+        /// <summary>
+        /// Updates the BOID's positions.
+        /// </summary>
+        private void MoveBoids()
+        {
+            foreach (var allBoids in this.boidsList)
+            {
+                var v1 = this.Cohesion(allBoids);
+                var v2 = this.Dispersion(allBoids);
+                var v3 = this.Alignment(allBoids);
+                var v4 = TendTowardsPlace(allBoids);
+
+                allBoids.Velocity += v1 + v2 + v3 + v4;
+                LimitVelocity(allBoids);
+                allBoids.Position += allBoids.Velocity.normalized;
+            }
+        }
+
+        /// <summary>
+        /// The cohesion rule.
+        /// </summary>
+        /// <param name="thisBoid">
+        /// This BOID.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Vector3"/>.
+        /// </returns>
+        private Vector3 Cohesion(Agent thisBoid)
+        {
+            var perceivedCenter = Vector3.zero;
+            foreach (var otherBoid in this.boidsList)
+            {
+                if (otherBoid != thisBoid)
                 {
-                    displacement -= otherBoid.position - thisBoid.position;
+                    perceivedCenter += otherBoid.Position;
                 }
             }
+
+            perceivedCenter = perceivedCenter / (NumberOfBoids - 1);
+
+            return (perceivedCenter - thisBoid.Position).normalized * this.CohesionMod;
         }
 
-        return displacement.normalized * dispersionMod;
-    }
-
-    private Vector3 Alignment(Agent thisBoid)
-    {
-        Vector3 percievedVelocity = Vector3.zero;
-        foreach (Agent otherBoid in boidsList)
+        /// <summary>
+        /// The dispersion rule.
+        /// </summary>
+        /// <param name="thisBoid">
+        /// This BOID.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Vector3"/>.
+        /// </returns>
+        private Vector3 Dispersion(Agent thisBoid)
         {
-            if (otherBoid != thisBoid)
+            var displacement = Vector3.zero;
+            foreach (var otherBoid in this.boidsList)
             {
-                percievedVelocity += otherBoid.velocity;
+                if (otherBoid == thisBoid)
+                {
+                    continue;
+                }
+
+                if ((otherBoid.Position - thisBoid.Position).magnitude < 100)
+                {
+                    displacement -= otherBoid.Position - thisBoid.Position;
+                }
             }
+
+            return displacement.normalized * this.dispersionMod;
         }
-        percievedVelocity = percievedVelocity / (numberOfBoids - 1);
 
-        return ((percievedVelocity - thisBoid.velocity).normalized / 8) * alignmentMod;
-    }
-
-    private Vector3 tendTowardsPlace(Agent thisBoid)
-    {
-        Vector3 place = Vector3.zero;
-
-        return (place - thisBoid.position) / 100;
-    }
-
-    private Vector3 bindPosition(Agent thisBoid)
-    {
-        float xMin = -5;
-        float xMax = 5;
-        float yMin = -5;
-        float yMax = 5;
-        float zMin = -5;
-        float zMax = 5;
-        Vector3 pushBack = Vector3.zero;
-
-        if (thisBoid.position.x < xMin)
+        /// <summary>
+        /// The alignment rule.
+        /// </summary>
+        /// <param name="thisBoid">
+        /// This BOID.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Vector3"/>.
+        /// </returns>
+        private Vector3 Alignment(Agent thisBoid)
         {
-            pushBack.x = 3;
-        }
-        else if (thisBoid.position.x > xMax)
-        {
-            pushBack.x = -3;
-        }
-        if (thisBoid.position.y < yMin)
-        {
-            pushBack.y = 3;
-        }
-        else if (thisBoid.position.y > yMax)
-        {
-            pushBack.y = -3;
-        }
-        if (thisBoid.position.z < zMin)
-        {
-            pushBack.x = 3;
-        }
-        else if (thisBoid.position.z > zMax)
-        {
-            pushBack.x = -3;
+            var percievedVelocity = Vector3.zero;
+            foreach (var otherBoid in this.boidsList)
+            {
+                if (otherBoid != thisBoid)
+                {
+                    percievedVelocity += otherBoid.Velocity;
+                }
+            }
+
+            percievedVelocity = percievedVelocity / (NumberOfBoids - 1);
+
+            return ((percievedVelocity - thisBoid.Velocity).normalized / 8) * this.alignmentMod;
         }
 
-        return pushBack.normalized;
-    }
-
-    private void limitVelocity(Agent thisBoid)
-    {
-        float limiter = 15;
-
-        if (thisBoid.velocity.magnitude > limiter)
+/*
+        /// <summary>
+        /// The rule to bind position.
+        /// </summary>
+        /// <param name="thisBoid">
+        /// This BOID.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Vector3"/>.
+        /// </returns>
+        private Vector3 BindPosition(Agent thisBoid)
         {
-            thisBoid.velocity = (thisBoid.velocity / thisBoid.velocity.magnitude).normalized * limiter; 
+            float xMin = -5;
+            float xMax = 5;
+            float yMin = -5;
+            float yMax = 5;
+            float zMin = -5;
+            float zMax = 5;
+            Vector3 pushBack = Vector3.zero;
+
+            if (thisBoid.Position.x < xMin)
+            {
+                pushBack.x = 3;
+            }
+            else if (thisBoid.Position.x > xMax)
+            {
+                pushBack.x = -3;
+            }
+            if (thisBoid.Position.y < yMin)
+            {
+                pushBack.y = 3;
+            }
+            else if (thisBoid.Position.y > yMax)
+            {
+                pushBack.y = -3;
+            }
+            if (thisBoid.Position.z < zMin)
+            {
+                pushBack.x = 3;
+            }
+            else if (thisBoid.Position.z > zMax)
+            {
+                pushBack.x = -3;
+            }
+
+            return pushBack.normalized;
         }
+*/   
     }
 }

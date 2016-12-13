@@ -138,8 +138,8 @@ Camera:
   m_GameObject: {fileID: 40645404}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.4120891, g: 0.54635835, b: 0.75735295, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -171,7 +171,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 40645404}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.32, z: -43.8}
+  m_LocalPosition: {x: 0, y: 2.32, z: -82}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -209,7 +209,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: 10}
+  m_AnchoredPosition: {x: 3, y: 13.1}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &161970747
@@ -351,7 +351,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: -66}
+  m_AnchoredPosition: {x: 3, y: 14.5}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &324776017
@@ -773,6 +773,7 @@ GameObject:
   - 223: {fileID: 936759480}
   - 114: {fileID: 936759479}
   - 114: {fileID: 936759478}
+  - 114: {fileID: 936759482}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -859,6 +860,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &936759482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 936759477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38170dba60dcd5c4283292e718789e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cohesion: {fileID: 1945848549}
+  dispersion: {fileID: 1510993349}
+  alignment: {fileID: 1273567123}
+  boids: {fileID: 2104505184}
 --- !u!1 &1034587818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1062,7 +1078,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: Reload
 --- !u!222 &1246028970
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1172,7 +1188,7 @@ RectTransform:
   m_RootOrder: 4
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 3, y: 80}
+  m_AnchoredPosition: {x: 3, y: 3}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1273567123
@@ -1462,7 +1478,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 3, y: 40}
+  m_AnchoredPosition: {x: 3, y: 45}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1510993349
@@ -1641,7 +1657,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: 88}
+  m_AnchoredPosition: {x: 3, y: 15.3}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1945706132
@@ -1718,7 +1734,7 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 3, y: 3}
+  m_AnchoredPosition: {x: 3, y: 83}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1945848549
@@ -1844,7 +1860,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2094395063}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 936759482}
+        m_MethodName: Reload
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: MainScene
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &2094395063
@@ -1971,8 +1998,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e4019b898cae2a43a2138f1a2ac6b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boidsList: []
   boidPrefab: {fileID: 1000012592646758, guid: d4a2aa976c5519d4d8c3bc752ed454e3, type: 2}
-  numberOfBoids: 25
-  cohesionMod: 1
-  dispersionMod: 0.105
-  alignmentMod: 0
